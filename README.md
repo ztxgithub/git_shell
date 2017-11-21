@@ -180,9 +180,33 @@
                     结果　$*=1 2 3    # "1" "2" "3"
 
                     echo "\$*" = "$*"
+                    > ./Variables.sh 1 2 3
+                    结果　$*=1 2 3    # "1 2 3"
         $$　：脚本运行的当前进程ID号
         $!　：后台运行的最后一个进程的ID号
-        $@　：
+        $@　：传递给脚本或函数的所有参数, $@加不加双引号,都是以$1" "$2" … "$n" 的形式输出所有参数
+                echo "print each param from \"\$*\""
+                for var in "$*"
+                do
+                    echo "$var"
+                done
+                echo "print each param from \"\$@\""
+                for var in "$@"
+                do
+                    echo "$var"
+                done
+                
+                结果：
+                    print each param from "$*"
+                    a b c d
+                    print each param from "$@"
+                    a
+                    b
+                    c
+                    d
+                    
+        $0　：当前脚本的文件名
+        $n　：传递给脚本或函数的参数.n 是一个数字,表示第几个参数.例如,第一个参数是$1,第二个参数是$2
 ```
 
 # shell 注意事项
