@@ -167,6 +167,8 @@
         $LINENO：这个变量表示在本shell脚本中该变量出现时所在的行数．它只在脚本中它出现时有意义，它一般可用于调试
         $TZ : 时区
         $PATH：可执行程序文件的搜索路径.一般有/usr/bin/,/usr/local/bin,等等．
+        $PWD : 当前路劲(绝对路劲)
+        $RANDOM: Bash的一个返回伪随机整数(范围为0 - 32767)的内部函数(而不是一个常量或变量)
         
     7.位置参数
         $#　: 传递到脚本的参数个数
@@ -207,6 +209,89 @@
                     
         $0　：当前脚本的文件名
         $n　：传递给脚本或函数的参数.n 是一个数字,表示第几个参数.例如,第一个参数是$1,第二个参数是$2
+        $-  :显示Shell使用的当前选项，与set命令功能相同
+        $?  :显示最后命令的退出状态.0表示没有错误,其他任何值表明有错误
+              haproxy 未启动
+                > killall -0 haproxy
+                   haproxy: no process found
+                   
+                > echo $?
+                  结果： 1   
+                  
+              haproxy 已启动
+                 > killall -0 haproxy
+                     
+                  > echo $?
+                    结果： 0    
+```
+
+## 参数变量
+
+```shell
+    1.${parameter-default}：当变量没有定义声明时,parameter=default
+        echo "username=${username-whoami}"
+            结果：
+                username=whoami
+                
+    2.${variablename?}  :结构也能检查一个脚本中变量的设置情况,如果variablename没有定义声明,或则值为null,则shell执行终止退出.
+    
+    3.${variablename?"ERROR MESSAGE"} :如果variablename没有定义声明,或则值为null,则shell执行终止退出,并打印"ERROR MESSAGE"
+    
+    4.${#var}：字符串长度（即变量$var的字符个数）.对于数组来说，${#array}是数组的第一个元素的升序.
+      ${#*}和${#@} 表示传递给参数的个数.对于一个数组来说，${#array[*]}和${#array[@]}表示数组中元素的个数
+      
+    5.${var#Pattern} :删除从$var前端开始的最短匹配$Pattern的字符串(一般Pattern是正则表达式),
+      ${var##Pattern}：删除从$var前端开始最长匹配$Pattern的字符串(一般Pattern是正则表达式)
+            echo `basename $0`          # 取基本的脚本名(不包含全路径).
+            echo "${0##*/}"             # 脚本名(不包含全路径)
+            
+            filename=test.data
+            echo "${filename##*.}"      # data
+                                        # 文件的扩展名.
+                                        
+    6.${parameter}：和$parameter是相同的，都是表示变量parameter的值
+                            
+```
+
+## declare
+
+```shell
+    1. -f :会打印出　declare -f 前面的所有定义的函数
+    2. -i :将变量申明为整数
+            declare -i var1   # var1是一个整数.
+            var1=2367
+            echo "var1 declared as $var1"
+            var1=var1+1       # 整数声明后，不需要使用'let'.
+            
+    3.-r : 将变量申明为只读
+            declare -r var2=13.36         # 'declare'允许设置变量的属性，同时也给变量赋值.
+            var2=13.37                    # 试图更改只读变量的值引起错误，并且从脚本退出. 
+                                       
+    4.-a : 声明为数组
+                declare -a indices
+```
+
+
+## shell脚本编程命令
+
+```shell
+    1. basename:用于打印目录或者文件的基本名称
+        显示当前目录名(只含一个路劲名,不是绝对路劲)
+            > basename `pwd`
+            
+    2.dirname：用于截取目录
+    
+    3.eval
+        eval 命令将会首先扫描命令行进行所有的置换,然后再执行该命令.该命令适用于那些一次扫描无法实现其功能的变量,
+        该命令对变量进行两次扫描.这些需要进行两次扫描的变量有时被称为复杂变量.
+        eval命令即可以用于回显简单变量，也可以用于回显复杂变量.
+            a='my'
+            b='site'
+            my_site='my site www.361way.com'
+            eval echo '$'"$a"_"$b"
+            eval echo '$'{"$a"_"$b"}
+        
+                            
 ```
 
 # shell 注意事项
@@ -251,5 +336,9 @@
         echo "uninitialized_variable = $uninitialized_variable"
                                         # uninitialized_variable =
                                           结果仍然是null值.
+                                          
+    7.如果要进行shell中变量的加减法,必须每次计算时都要加上 let ,或则可以 declare -i 声明为一个整数,以后计算时就不需要加上 let
+    
+    8. suffix=$(date +%s)  和　suffix=`date +%s` 　效果一样
 
 ```
