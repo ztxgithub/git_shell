@@ -510,7 +510,108 @@
                         read var1        #从键盘上读入
                         echo "variable #1 = $var1"
                     done
-                    exit 0                
+                    exit 0          
+                          
+                          
+        无限循环:
+                while :
+                do
+                    command
+                done
+                或者
+                
+                while true
+                do
+                    command
+                done
+                
+    3.until 循环
+    
+        until循环执行一系列命令直至条件为真时停止,until循环与while循环在处理方式上刚好相反,
+        条件可为任意测试条件,测试发生在循环末尾，因此循环至少执行一次
+            until condition
+            do
+                command
+            done
+            
+    4.case
+    
+         case 值 in
+         模式1)
+             command1
+             ;;
+         模式2）
+             commandN
+             ;;
+          *)  
+            command1
+             ;;
+         esac
+            
+            while :
+            do
+                echo -n "Input a number between 1 to 5: "
+                read aNum
+                case $aNum in
+                    1|2|3|4|5) echo "Your number is $aNum!"
+                    ;;
+                    *) echo "You do not select a number between 1 to 5, game is over!"
+                        break   # 退出while循环
+                    ;;
+                esac
+            done
+        
+```
+
+## 函数
+
+```shell
+    
+    shell中函数的定义格式如下：
+        [ function ] funname [()]
+        
+        {
+        
+            action;
+        
+            [return int;]
+        
+        }
+        
+        1、可以带function fun() 定义,也可以直接fun() 定义,不带任何参数。
+        2、参数返回，可以显示加：return 返回，如果不加，将以最后一条命令运行结果，作为返回值。
+        
+        例子:
+            funWithReturn(){
+                aNum=1
+                anotherNum=2
+                return $(($aNum+$anotherNum))
+            }
+            funWithReturn
+            echo "输入的两个数字之和为 $? !"
+            
+        函数返回值在调用该函数后通过 $? 来获得.
+        注意：所有函数在使用前必须定义。这意味着必须将函数放在脚本开始部分，直至shell解释器首次发现它时，才可以使用。
+        调用函数仅使用其函数名即可。
+        
+        在Shell中，调用函数时可以向其传递参数。在函数体内部，通过 $n 的形式来获取参数的值，例如，$1表示第一个参数，$2表示,
+        当n>=10时，需要使用${n}来获取参数
+        
+            funWithParam(){
+                echo "第一个参数为 $1 !"
+                echo "第二个参数为 $2 !"
+                echo "第十个参数为 $10 !"
+                echo "第十个参数为 ${10} !"
+                echo "第十一个参数为 ${11} !"
+                echo "参数总数有 $# 个!"
+                echo "作为一个字符串输出所有参数 $* !"
+            }
+            funWithParam 1 2 3 4 5 6 7 8 9 34 73
+            
+        局部变量:
+            如果变量用local来声明，那么它只能在该变量声明的代码块(block of code)中可见，这个代码块就是局部"范围"
+        
+                            
 ```
 
 # shell 注意事项
