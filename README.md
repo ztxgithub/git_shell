@@ -271,6 +271,17 @@
                 declare -a indices
 ```
 
+## 双括号结构
+
+```shell
+    用((...))结构来使用C风格操作符来处理变量
+    
+    (( a = 23 ))  # 以C风格来设置一个值，在"="两边可以有空格.
+    echo "a (initial value) = $a"
+    
+    (( a++ ))     # C风格的计算后自增.
+    echo "a (after a++) = $a"
+```
 
 ## shell脚本编程命令
 
@@ -290,8 +301,216 @@
             my_site='my site www.361way.com'
             eval echo '$'"$a"_"$b"
             eval echo '$'{"$a"_"$b"}
+            
+    4.echo 
+        选项：
+            -e : 打印出转义字符串
+            -n : 不产生新行
         
                             
+```
+
+### 文件测试操作符
+
+如果下面的条件成立返回真。[demo15](./example/demo15)
+
+| 操作符 | 描述 |
+| ---- | ---- |
+| -e | 文件存在 |
+| -r | 文件是否可读 (指运行这个测试命令的用户的读权限) |
+| -w | 文件是否可写 (指运行这个测试命令的用户的读权限) |
+| -x | 文件是否可执行 (指运行这个测试命令的用户的读权限) |
+| -f | 文件是一个普通文件(不是一个目录或是一个设备文件) |
+| -s | 文件大小不为零 |
+| -d | 文件是一个目录 |
+| -b | 文件是一个块设备(软盘，光驱，等等。) |
+| -c | 文件是一个字符设备(键盘，调制解调器，声卡，等等。) |
+| -p | 文件是一个管道 |
+| -h | 文件是一个符号链接 |
+| -L | 文件是一个符号链接 |
+| -S | 文件是一个socket |
+| -t | 文件(描述符)与一个终端设备相关。|
+| -g | 文件或目录的设置-组-ID(sgid)标记被设置。 |
+| -u | 文件的设置-用户-ID(suid)标志被设置 |
+| -k | 粘住位设置 |
+| -N | 文件最后一次读后被修改 |
+| f1 -nt f2 | 文件f1比f2新 |
+| f1 -ot f2 | 文件f1比f2旧 |
+| f1 -ef f2 | 文件f1和f2 是相同文件的硬链接 |
+| ! | "非" -- 反转上面所有测试的结果(如果没有给出条件则返回真)。|
+
+例子：
+    file="demo15"
+    if [ -r $file ]
+    then
+       echo "文件可读"
+    else
+       echo "文件不可读"
+
+**注意⚠️**
+
+1. `-t` 这个测试选项可以用于检查脚本中是否标准输入 ([ -t 0 ])或标准输出([ -t 1 ])是一个终端。
+1. `-g` 如果一个目录的sgid标志被设置，在这个目录下创建的文件都属于拥有此目录的用户组，而不必是创建文件的用户所属的组。
+    这个特性对在一个工作组里的同享目录很有用处.
+    
+### 比较操作符
+
+二元比较操作符比较两个变量或是数值。注意整数和字符串比较的分别。
+
+**整数比较**
+
+[demo16](./example/demo16)
+
+| 比较操作符 | 描述 | 例子 |
+| ---- | ---- | ---- |
+| `-eq` | 等于 | `if [ "$a" -eq "$b" ]` |
+| `-ne` | 不等于 | `if [ "$a" -ne "$b" ]` | 
+| `-gt` | 大于 | `if [ "$a" -gt "$b" ]` |
+| `-ge` | 大于等于 | `if [ "$a" -ge "$b" ]` |
+| `-lt` | 小于 | `if [ "$a" -lt "$b" ]` |
+| `-le` | 小于等于 | `if [ "$a" -le "$b" ]` |
+| `<` | 小于(在双括号里使用) | `(("$a" < "$b"))` |
+| `<=` | 小于等于 (在双括号里使用) | `(("$a" <= "$b"))` |
+| `>` | 大于 (在双括号里使用) | `(("$a" > "$b"))` |
+| `>=` | 大于等于(在双括号里使用) | `(("$a" >= "$b"))` |
+
+**字符串比较**
+
+| 比较操作符 | 描述 | 例子 |
+| ---- | ---- | ---- |
+| = | 等于 | `if [ "$a" = "$b" ]` |
+| == | 等于，它和=是同义词。 | `if [ "$a" == "$b" ]` |
+| != | 不相等，操作符在[[ ... ]]结构里使用模式匹配. | `if [ "$a" != "$b" ]` |
+| < | 小于，依照ASCII字符排列顺序，注意"<"字符在[ ] 结构里需要转义 | `if [[ "$a" < "$b" ]]` `if [ "$a" \< "$b" ]` |
+| > | 大于，依照ASCII字符排列顺序，注意">"字符在[ ] 结构里需要转义. | `if [[ "$a" > "$b" ]]` `if [ "$a" \> "$b" ]`| 
+| -z | 字符串为"null"，即是指字符串长度为零。 | - |
+| -n | 字符串不为"null"，即长度不为零。 | - |
+
+**混合比较**
+
+| 比较操作符 | 描述 | 例子 |
+| ---- | ---- | ---- |
+| -a | 逻辑与，如果exp1和exp2都为真，则exp1 -a exp2返回真。 | `if [ "$exp1" -a "$exp2" ]` |
+| -o | 逻辑或，只要exp1和exp2任何一个为真，则exp1 -o exp2 返回真。 | `if [ "$exp1" -o "$exp2" ]` |
+
+在一个混合测试中，把一个字符串变量引号引起来可能还不够。如果$string变量是空的话，表达式`[ -n "$string" -o "$a" = "$b" ]`
+在一些Bash版本中可能会引起错误。安全的办法是附加一个外部的字符串给可能有空字符串变量比较的所有变量，
+`[ "x$string" != x -o "x$a" = "x$b" ]` (x字符可以互相抵消)
+
+## 操作字符串
+
+```shell
+    1. 索引
+        expr index $string $substring 在字符串$string中$substring第一次出现的数字位置
+            String=abcABC123ABCabc
+            echo `expr index "$String" C12`             # 6 , C 字符的位置.
+                                                            
+    2. 字串提取
+        ${string:position} 把$string中从第$postion个字符(postion从0开始)开始字符串提取出来。
+            如果$string是"*"或"@"，则表示从位置参数中提取第$postion后面的字符串。
+        ${string:position:length} 把$string中$postion个字符后面的长度为$length的字符串提取出来
+        
+              # 字串提取
+              String=abcABC123ABCabc
+              #       0123456789.....
+              #       以0开始计算. 
+              echo ${String:0}                            # abcABC123ABCabc
+              
+              ./escaped.sh 1 2 3
+              echo ${*:1}      # 1 2 3
+              
+              ./escaped.sh 1 2 3
+              echo ${*:0}      ./escaped.sh 1 2 3
+
+              
+              从字符串的右边结尾处提取
+                echo ${String:(-4)}                         # Cabc 
+                
+    3.字串移动
+      
+          ${string#substring}从$string左边开始，剥去最短匹配$substring子串。
+          ${string##substring}从$string左边开始，剥去最长匹配$substring子串。
+          ${string%substring} 从$string结尾开始，剥去最短匹配$substring子串。
+          ${string%%substring}从$string结尾开始，剥去最长匹配$substring子串。
+          
+          String=abcABC123ABCabc
+          #       ├----┘     ┆
+          #       └----------┘
+          
+          echo ${String#a*C}      # 123ABCabc
+          # 剥去匹配'a'到'C'之间最短的字符串.
+          
+          echo ${String##a*C}     # abc
+          # 剥去匹配'a'到'C'之间最长的字符串.
+          
+          
+          String=abcABC123ABCabc
+          #       ┆           ||
+          #       └------------┘
+          
+          echo ${String%b*c}      # abcABC123ABCa
+          # 从$String后面尾部开始，剥去匹配'a'到'C'之间最短的字符串.
+          
+          echo ${String%%b*c}     # a
+          # 从$String后面尾部开始，剥去匹配'a'到'C'之间最长的字符串.
+                                 
+```
+
+## shell 流程控制
+
+```shell
+    1.for 循环
+        for循环一般格式为：
+            for var in item1 item2 ... itemN
+            do
+                command1
+                command2
+                ...
+                commandN
+            done
+            
+        例子:
+            for loop in 1 2 3 4 5
+            do
+                echo "The value is: $loop"
+            done
+            
+            结果:
+                The value is: 1
+                The value is: 2
+                The value is: 3
+                The value is: 4
+                The value is: 5
+                
+    2.while语句
+        while condition
+        do
+            command
+        done
+        
+        例子:
+           var0=0
+           LIMIT=10
+           
+           while [ "$var0" -lt "$LIMIT" ]
+           do
+             echo -n "$var0 "        # -n 将会阻止产生新行。
+             var0=`expr $var0 + 1`   # var0=$(($var0+1))  也可以。
+                                     # var0=$((var0 + 1)) 也可以。
+                                     # let "var0 += 1"    也可以。
+           done                      # 使用其他的方法也行。
+            
+        结果:
+                1 2 3 4 5 6 7 8 9
+                
+            多条件判断
+                    while ( [ "$var1" == end ] || [ "$var1" == begin ] )  #"$var1" 与 "[" 要有空格,"$var1" 与 "==" 要有空格
+                    do
+                    echo "Input variable #1 (end to exit) "
+                        read var1        #从键盘上读入
+                        echo "variable #1 = $var1"
+                    done
+                    exit 0                
 ```
 
 # shell 注意事项
@@ -340,5 +559,8 @@
     7.如果要进行shell中变量的加减法,必须每次计算时都要加上 let ,或则可以 declare -i 声明为一个整数,以后计算时就不需要加上 let
     
     8. suffix=$(date +%s)  和　suffix=`date +%s` 　效果一样
+    
+    9.判断语句 [ "$var1" == end ]  
+      "$var1" 与 "[" 要有空格,"$var1" 与 "==" 要有空格
 
 ```
