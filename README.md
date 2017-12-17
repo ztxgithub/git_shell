@@ -503,14 +503,14 @@
         结果:
                 1 2 3 4 5 6 7 8 9
                 
-            多条件判断
-                    while ( [ "$var1" == end ] || [ "$var1" == begin ] )  #"$var1" 与 "[" 要有空格,"$var1" 与 "==" 要有空格
-                    do
-                    echo "Input variable #1 (end to exit) "
-                        read var1        #从键盘上读入
-                        echo "variable #1 = $var1"
-                    done
-                    exit 0          
+        多条件判断
+            while ( [ "$var1" == end ] || [ "$var1" == begin ] )  #"$var1" 与 "[" 要有空格,"$var1" 与 "==" 要有空格
+            do
+            echo "Input variable #1 (end to exit) "
+                read var1        #从键盘上读入
+                echo "variable #1 = $var1"
+            done
+            exit 0          
                           
                           
         无限循环:
