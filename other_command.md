@@ -113,5 +113,13 @@
                         man|6|/var/cache/man
                         lp|7|/var/spool/lpd
                         mail|8|/var/mail
+                        
+          (3) 指定多个分隔符
+                >  awk -F '[:;]' '{print $0,$1,$2,$3,$4}' OFS="|" ./awk_example
+                结果：
+                    aaa;bbb:ccc:ddd;eee|aaa|bbb|ccc|ddd
+                    
+                awk_example文件内容:
+                    aaa;bbb:ccc:ddd;eee
 ```
 
