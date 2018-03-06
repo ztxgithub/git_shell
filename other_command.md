@@ -121,5 +121,111 @@
                     
                 awk_example文件内容:
                     aaa;bbb:ccc:ddd;eee
+                    
+    字符串匹配:
+            ~ :表示模式开始
+            /pattern/ :pattern是模式,可以是正则表达式
+            
+            awk_example文件内容:
+                    aaa:bbb:ccc:ddd:eee
+                    aaa:bbb:ccc:ddd:eee
+                    aaa:bbb:rcc:ddd:eee
+                    aaa:bbb:crc:ddd:eee
+                    aaa:bbb:ccc:ddd:eee
+                    
+         (1) 根据分隔符FS(:),匹配第三列为“ccc”
+            > awk -F : '$3 ~ /ccc/ {print NR,$1,$2,$3}' ./awk_example
+            结果：
+                1 aaa bbb ccc
+                2 aaa bbb ccc
+                5 aaa bbb ccc
+                
+        (2) 根据分隔符FS(:),检测每一行匹配为“ccc”
+         > awk -F : '/ccc/ {print NR,$1,$2,$3}' ./awk_example
+         结果：
+             1 aaa bbb ccc
+             2 aaa bbb ccc
+             3 aaa bbb rcc
+             4 aaa bbb crc
+             5 aaa bbb ccc
+             
+         (3) 根据分隔符FS(:),检测每一行匹配为“ccc”或则"rcc"
+                  > awk -F : '$3 ~ /ccc|rcc/ {print NR,$1,$2,$3}' ./awk_example
+                  结果：
+                     1 aaa bbb ccc
+                     2 aaa bbb ccc
+                     3 aaa bbb rcc
+                     5 aaa bbb ccc
+                     
+         (4) 模式取反，根据分隔符FS(:),检测每一行匹配非“ccc”
+                           > awk -F : '$3 !~ /ccc/ {print NR,$1,$2,$3}' ./awk_example    (注意"!~" 之间没有空格)
+                           结果：
+                              1 aaa bbb ccc
+                              2 aaa bbb ccc
+                              3 aaa bbb rcc
+                              5 aaa bbb ccc
+                              
+    拆分文件:
+         (1) 根据分隔符FS(:)，指定某一列，将该列下值相同的行保存在 以该值为文件名中。
+                    > awk -F : '{print > $3}' ./awk_example
+                    结果：
+                    > ls
+                    ccc  crc  rcc
+                    
+                    ccc中文件的内容为：
+                        aaa:bbb:ccc:ddd:eee
+                        aaa:bbb:ccc:ddd:eee
+                        aaa:bbb:ccc:ddd:eee
+                        
+         (2) 根据分隔符FS(:)，指定某一列，将该列下值相同的某几列保存在 以该值为文件名中。
+                    > awk -F : '{print $1,$2,$3 > $3}' ./awk_example  
+                    结果：
+                    > ls
+                    ccc  crc  rcc
+                    
+                    ccc中文件的内容为：
+                        aaa bbb ccc
+                        aaa bbb ccc
+                        aaa bbb ccc
+                        
+         (3) awk 'NR!=1{if($6 ~ /TIME|ESTABLISHED/) print > "1.txt";
+             else if($6 ~ /LISTEN/) print > "2.txt";
+             else print > "3.txt" }' netstat.txt
+             
+    统计:
+        (1) 计算当前目录下所有文件大小总和
+                > ls -l | awk '{my_sum+=$5} END {print my_sum}'
+                结果：
+                    160
+                    
+                > ls -l
+                结果：
+                    -rw-rw-r-- 1 jame jame 100 Mar  6 19:45 awk_example
+                    -rw-rw-r-- 1 jame jame  36 Mar  6 20:18 ccc
+                    -rw-rw-r-- 1 jame jame  12 Mar  6 20:18 crc
+                    -rw-rw-r-- 1 jame jame  12 Mar  6 20:18 rcc
+                    
+        (2) 统计某一列值相同的个数
+                > awk -F : 'NR!=1{a[$3]++} END {for(i in a) print i "->" a[i]};' ./awk_example 
+                结果:
+                    rcc->1
+                    crc->1
+                    ccc->2
+                    
+                >  awk 'NR!=1{a[$6]++;} END {for (i in a) print i ", " a[i];}' netstat.txt
+                结果:
+                    TIME_WAIT, 3
+                    FIN_WAIT1, 1
+                    ESTABLISHED, 6
+                    FIN_WAIT2, 3
+                    LAST_ACK, 1
+                    LISTEN, 4
+                    
+                查看每一个用户占多少内存
+                >  ps aux | awk 'NR!=1{a[$1]+=$6;} END {for(i in a) print i "->" a[i]"KB";}'
+                结果:
+                    jame->2302408KB
+                    syslog->3396KB
+                
 ```
 
