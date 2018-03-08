@@ -226,6 +226,55 @@
                 结果:
                     jame->2302408KB
                     syslog->3396KB
+                    
+    awk脚本:
+        BEGIN{ 这里面放的是执行前的语句 }
+        END {这里面放的是处理完所有的行后要执行的语句 }
+        {这里面放的是处理每一行时要执行的语句}
+        
+        实例:
+            score.txt 文件内容
+                Marry   2143 78 84 77
+                Jack    2321 66 78 45
+                Tom     2122 48 77 71
+                Mike    2537 87 97 95
+                Bob     2415 40 57 62
+                
+            cal.awk 内容
+                  #!/usr/bin/awk -f    （绝对路径很关键）
+                    #运行前
+                    BEGIN {
+                            math = 0
+                            english = 0
+                            computer = 0
+                          
+                            printf"NAME    NO   MATH  ENGLISH  COMPUTER  ToTAL\n"
+                            printf"-------------------------------------------\n"
+                            
+                            
+                          }
+                    
+                    #运行中
+                    {
+                        math+=$3
+                        english+=$4
+                        computer+=$5
+                        printf "%-6s %-6s %4d %8d %8d %8d\n", $1, $2, $3,$4,$5, $3+$4+$5
+                    
+                    }
+                    
+                    #运行后
+                    END{
+                            printf "---------------------------------------------\n"
+                            printf "  TOTAL:%10d %8d %8d \n", math, english, computer
+                            printf "AVERAGE:%10.2f %8.2f %8.2f\n", math/NR, english/NR, computer/NR
+                       }
+                    
+                    
+            > awk -f cal.awk ./score.txt    
+            或则
+            > ./cal.awk ./score.txt         (其中cal.awk的内容 #!很关键)
+          
                 
 ```
 
