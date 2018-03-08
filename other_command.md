@@ -7,8 +7,9 @@
 ```shell
     awk就是把文件逐行的读入，以空格为默认分隔符将每行切片，切开的部分再进行各种分析处理
     使用方法：
-            awk '{pattern + action}' {filenames}
+            awk 'pattern {action}' filenames
             
+            'program text'
             pattern:awk在数据中查找的内容
             action: 是在找到匹配内容时所执行的一系列命令,如果action省略，则默认是{ print }
             
@@ -23,6 +24,7 @@
             NR： 已经读出的记录数，就是行号，从1开始，如果有多个文件话，这个值也是不断累加中。
             FNR：当前记录数，与NR不同的是，这个值会是各个文件自己的行号
             FILENAME：当前输入文件的名字
+            length:代表每一行的长度
         
 ```
 
@@ -274,6 +276,26 @@
             > awk -f cal.awk ./score.txt    
             或则
             > ./cal.awk ./score.txt         (其中cal.awk的内容 #!很关键)
+            
+            
+    环境变量：
+            如何与环境变量进行交互（如何读取环境变量）
+            (1) 使用-v (-v var=value   assigns value to program variable var)
+            (2) 使用ENVIRON(前提条件是在shell终端中要 export该变量)
+            
+            实例:
+                > x=10 y=5
+                > export y
+                >echo $x $y
+                结果 10 5
+                > awk -v val=$x '{print $1,$2,$3,val,ENVIRON["y"]}' ./score.txt 
+                结果:
+                    Marry 2143 78 10 5
+                    Jack 2321 66 10 5
+                    Tom 2122 48 10 5
+                    Mike 2537 87 10 5
+                    Bob 2415 40 10 5
+        
           
                 
 ```
