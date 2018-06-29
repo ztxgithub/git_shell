@@ -2,6 +2,12 @@
 
 ## awk
 
+### 用途
+
+```shell
+    1.能够将格式的内容　按　固定的格式进行解析,匹配　再格式化输出
+```
+
 ### awk概要
 
 ```shell
@@ -145,11 +151,9 @@
         (2) 根据分隔符FS(:),检测每一行匹配为“ccc”
          > awk -F : '/ccc/ {print NR,$1,$2,$3}' ./awk_example
          结果：
-             1 aaa bbb ccc
-             2 aaa bbb ccc
-             3 aaa bbb rcc
-             4 aaa bbb crc
-             5 aaa bbb ccc
+              1 aaa bbb ccc
+              2 aaa bbb ccc
+              5 aaa bbb ccc
              
          (3) 根据分隔符FS(:),检测每一行匹配为“ccc”或则"rcc"
                   > awk -F : '$3 ~ /ccc|rcc/ {print NR,$1,$2,$3}' ./awk_example
@@ -162,10 +166,8 @@
          (4) 模式取反，根据分隔符FS(:),检测每一行匹配非“ccc”
                            > awk -F : '$3 !~ /ccc/ {print NR,$1,$2,$3}' ./awk_example    (注意"!~" 之间没有空格)
                            结果：
-                              1 aaa bbb ccc
-                              2 aaa bbb ccc
-                              3 aaa bbb rcc
-                              5 aaa bbb ccc
+                             3 aaa bbb rcc
+                             4 aaa bbb crc
                               
     拆分文件:
          (1) 根据分隔符FS(:)，指定某一列，将该列下值相同的行保存在 以该值为文件名中。
