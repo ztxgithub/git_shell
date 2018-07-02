@@ -210,9 +210,9 @@
                 # This is my goat, my goat's name is adam
                 
     2.命令打包(cmd可以是多个，它们可以用分号分开，可以用大括号括起来作为嵌套命令)
-        (1) 对3行到第6行，执行命令/This/d  (匹配到This字符所对应的行进行删除)
+        (1) 对第3行到第6行，执行命令/This/d  (匹配到This字符所对应的行进行删除)
                 > sed '3,6{/This/d}' pets.txt
-        (2) 对3行到第6行，匹配/This/成功后，再匹配/fish/，成功后执行d命令
+        (2) 对第3行到第6行，匹配/This/成功后，再匹配/fish/，成功后执行d命令
                 > sed '3,6{/This/{/fish/d}}' pets.txt
         
 ```
