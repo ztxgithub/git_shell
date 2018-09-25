@@ -298,8 +298,115 @@
                     Tom 2122 48 10 5
                     Mike 2537 87 10 5
                     Bob 2415 40 10 5
+                     
+```
+
+## 文件去重
+
+```shell
+    1.将文件按第二列的内容进行去重
+    
+        内容:
+            20180918_22:23:35VmRSS:     19172 kB
+            20180918_22:23:36VmRSS:     19172 kB
+            20180918_22:23:37VmRSS:     19172 kB
+            20180918_22:23:38VmRSS:     19172 kB
+            20180918_22:23:40VmRSS:     19172 kB
+            20180918_22:23:41VmRSS:     19172 kB
+            20180918_22:23:42VmRSS:     19172 kB
+            20180918_22:23:43VmRSS:     19172 kB
+            20180918_22:23:44VmRSS:     19172 kB
+            20180918_22:23:45VmRSS:     19172 kB
+            20180918_22:23:46VmRSS:     19172 kB
+            20180918_22:23:47VmRSS:     19172 kB
+            20180918_22:23:48VmRSS:     19172 kB
+            20180918_22:23:50VmRSS:     19172 kB
+            20180918_22:23:51VmRSS:     19172 kB
+            20180918_22:23:52VmRSS:     19172 kB
+            
+        sort -n -k2 sort.log | awk '$2 == tmp {} $2 != tmp {tmp = $2;print $0}' >> sort3.log
+```
+
+## sort 命令
+
+```shell
+    1. 概要
+        sort将文件的每一行作为一个单位，相互比较，比较原则是从首字符向后，
+        依次按ASCII码值进行比较，最后将他们按升序输出。
         
-          
-                
+    2. 参数:
+            (1) -u : 在输出行中去除重复行
+                例如:  seq.txt
+                        apple
+                        banana
+                        banana
+                        orange
+                        pear
+                        
+                > sort -u seq.txt
+                结果:
+                    apple
+                    banana
+                    orange
+                    pear
+                    
+            (2) -r : 降序，　不加 -r 默认是升序
+                > sort -r seq.txt
+                结果:
+                    pear
+                    pear
+                    orange
+                    banana
+                    apple
+                    
+            (3) -o : 如果要将排序后的结果重定向到原来的文件，则要使用 -o
+                A.
+                    > sort seq.txt > seq.txt
+                    结果 seq.txt 内容为空
+                    
+                    > sort seq.txt -o seq.txt
+                        结果:
+                            apple
+                            banana
+                            orange
+                            pear
+                            
+            (4) -n : sort 要以 "数值来排序" 而不是以　"按字符排序"
+            
+                    > cat seq.txt
+                    结果:
+                         1
+                        10
+                        2
+                        
+                    A. 按字符来排序
+                        > sort seq.txt
+                        结果:
+                             1
+                            10
+                            2
+                            
+                    B. 按数组排序
+                        > sort -n seq.txt
+                        结果:
+                             1
+                            2
+                            10
+                            
+            (5) -t : 代表列与列之间分隔符,后面设定间隔符
+            　　 -k : 指定第几列
+            
+                 facebook.txt 的内容
+                    banana:30:5.5
+                    apple:10:2.5
+                    pear:90:2.3
+                    orange:20:3.4
+                    
+                 > sort -t : -n -k 2 facebook.txt 
+                 结果:
+                       apple:10:2.5
+                       orange:20:3.4
+                       banana:30:5.5
+                       pear:90:2.3
 ```
 
